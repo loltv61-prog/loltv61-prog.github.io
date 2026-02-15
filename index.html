@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Витрина подписок</title>
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Общие сбросы и базовые стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* Шапка с блюром */
+        header {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* Hero-секция – общая, не привязана к конкретному бренду */
+        .hero {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem 7rem;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            opacity: 0.95;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: white;
+            color: #3b82f6;
+            padding: 0.9rem 2.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background: #f8fafc;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+        }
+
+        /* Преимущества (карточки над подписками) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 3rem 2rem 5rem;
+            max-width: 1200px;
+            margin: -3rem auto 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature {
+            background: white;
+            padding: 2rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 1px solid #eef2f6;
+        }
+
+        .feature:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 35px rgba(59,130,246,0.1);
+        }
+
+        .feature i {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .feature h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .feature p {
+            color: #475569;
+        }
+
+        /* Подписки – карточки офферов */
+        .subscriptions {
+            padding: 4rem 2rem;
+            background: white;
+            text-align: center;
+        }
+
+        .subscriptions h2 {
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            color: #1e293b;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid #eef2f6;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 40px rgba(59,130,246,0.15);
+        }
+
+        .card.popular {
+            border: 2px solid #3b82f6;
+        }
+
+        .card.popular::before {
+            content: "🔥 Популярное";
+            position: absolute;
+            top: 16px;
+            right: -28px;
+            background: #3b82f6;
+            color: white;
+            padding: 4px 30px;
+            transform: rotate(45deg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .card .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #3b82f6;
+            margin: 1rem 0;
+        }
+
+        .card .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #64748b;
+        }
+
+        .card ul {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+            padding: 0 0.5rem;
+        }
+
+        .card li {
+            margin: 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card li i {
+            color: #3b82f6;
+            font-size: 1rem;
+        }
+
+        .card .btn-card {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 60px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+            box-shadow: 0 8px 15px rgba(59,130,246,0.3);
+        }
+
+        .card .btn-card:hover {
+            opacity: 0.9;
+        }
+
+        /* Секция призыва к действию */
+        .cta {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            clip-path: polygon(0 10%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .cta h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta .btn {
+            background: #3b82f6;
+            color: white;
+            padding: 1rem 3rem;
+            border-radius: 60px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+
+        .cta .btn:hover {
+            background: #2563eb;
+        }
+
+        /* Футер */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Адаптация под мобильные устройства */
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .nav-links { display: none; }
+            .subscriptions h2 { font-size: 2rem; }
+            .cta h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">SubsMarket</div>
+        <div class="nav-links">
+            <a href="#">Главная</a>
+            <a href="#subscriptions">Подписки</a>
+            <a href="#">Контакты</a>
+        </div>
+    </header>
+
+    <!-- Hero-секция – общая для всех -->
+    <section class="hero">
+        <h1>Все подписки по акциям</h1>
+        <p>Кино, музыка, софт, доставка и другие сервисы — выбирайте и оформляйте выгодно</p>
+        <a href="#subscriptions" class="btn-primary">Смотреть предложения</a>
+    </section>
+
+    <!-- Преимущества работы с нами -->
+    <section class="features">
+        <div class="feature">
+            <i class="fas fa-bolt"></i>
+            <h3>Мгновенное подключение</h3>
+            <p>Активация в течение 5 минут после оплаты</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-headset"></i>
+            <h3>Поддержка 24/7</h3>
+            <p>Всегда на связи, поможем с любым вопросом</p>
+        </div>
+        <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Гарантия качества</h3>
+            <p>Официальные подписки с гарантией работы</p>
+        </div>
+    </section>
+
+    <!-- Карточки подписок (офферов) – заполняются через JavaScript -->
+    <section id="subscriptions" class="subscriptions">
+        <h2>Актуальные предложения</h2>
+        <div class="cards" id="offer-cards">
+            <!-- Карточки будут сгенерированы скриптом ниже -->
+        </div>
+    </section>
+
+    <!-- Призыв к действию -->
+    <section class="cta">
+        <h2>Не нашли подходящую подписку?</h2>
+        <p>Напишите нам, и мы подберём для вас лучший вариант</p>
+        <a href="#" class="btn">Связаться с нами</a>
+    </section>
+
+    <footer>
+        <p>© 2026 SubsMarket. Все предложения предоставлены партнёрами.</p>
+    </footer>
+
+    <script>
+        // ========== МАССИВ ОФФЕРОВ ==========
+        // Добавляйте сюда новые предложения, копируя структуру объекта.
+        // Поля:
+        //   name     – название подписки
+        //   price    – цена (строка)
+        //   period   – период (например, "/мес", "/30 дней")
+        //   features – массив преимуществ (строки)
+        //   popular  – true/false (добавляет метку "Популярное")
+        //   link     – партнёрская ссылка (если пусто, при клике будет уведомление)
+        const offers = [
+            {
+                name: "СберПрайм",
+                price: "1 ₽",
+                period: "/30 дней",
+                features: [
+                    "Кино и сериалы",
+                    "Музыка без рекламы",
+                    "Кешбэк на доставку",
+                    "Скидки у партнёров"
+                ],
+                popular: true,
+                link: "https://partners.cpaex.ru/click?o=1688&a=33251"
+            },
+            {
+                name: "Яндекс Плюс",
+                price: "199 ₽",
+                period: "/мес",
+                features: [
+                    "Кинопоиск",
+                    "Яндекс Музыка",
+                    "Кешбэк баллами",
+                    "Доставка с плюсом"
+                ],
+                popular: false,
+                link: "" // Если ссылки нет, будет показано уведомление
+            },
+            {
+                name: "IVI",
+                price: "399 ₽",
+                period: "/мес",
+                features: [
+                    "Тысячи фильмов",
+                    "Сериалы и мультфильмы",
+                    "Без рекламы",
+                    "До 5 устройств"
+                ],
+                popular: false,
+                link: ""
+            },
+            {
+                name: "Start",
+                price: "299 ₽",
+                period: "/мес",
+                features: [
+                    "Сериалы Start",
+                    "Эксклюзивы",
+                    "HD качество",
+                    "Офлайн-доступ"
+                ],
+                popular: false,
+                link: ""
+            }
+        ];
+
+        // Функция отрисовки карточек на основе массива offers
+        function renderOffers() {
+            const container = document.getElementById('offer-cards');
+            if (!container) return;
+            container.innerHTML = '';
+
+            offers.forEach(offer => {
+                const card = document.createElement('div');
+                card.className = `card ${offer.popular ? 'popular' : ''}`;
+
+                const featuresList = offer.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
+
+                // Действие по клику: если указана ссылка, открываем в новом окне, иначе уведомление
+                const buttonAction = offer.link
+                    ? `window.open('${offer.link}', '_blank')`
+                    : `alert('Подписка «${offer.name}» будет доступна для подключения скоро.')`;
+
+                card.innerHTML = `
+                    <h3>${offer.name}</h3>
+                    <div class="price">${offer.price}<span>${offer.period}</span></div>
+                    <ul>
+                        ${featuresList}
+                    </ul>
+                    <button class="btn-card" onclick="${buttonAction}">Подключить</button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Запускаем отрисовку после полной загрузки страницы
+        document.addEventListener('DOMContentLoaded', renderOffers);
+    </script>
+</body>
+</html>
